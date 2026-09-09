@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: videoke-server
+    runtime: node
+    rootDir: server
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: YOUTUBE_API_KEY
+        sync: false
+      - key: CLIENT_URL
+        sync: false

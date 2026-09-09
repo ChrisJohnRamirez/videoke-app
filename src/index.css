@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+/*
+ * KANTAHAN THEME — "Fiesta Night"
+ *
+ * A Pinoy family-videoke-night palette:
+ * deep violet-night background with
+ * pink / gold / cyan disco-light
+ * accents. Gold doubles as the Strip
+ * prize color.
+ */
+@theme {
+  --color-ink: #170f2e;
+  --color-ink-soft: #1f1640;
+  --color-card: #241a44;
+  --color-card-hover: #2e2154;
+  --color-line: #3a2c63;
+
+  --color-pink: #ff3d8a;
+  --color-pink-soft: #ff6ba8;
+  --color-gold: #ffc94a;
+  --color-gold-soft: #ffdd8a;
+  --color-cyan: #4de8ff;
+
+  --color-cream: #fdf6ec;
+  --color-muted: #b3a6d9;
+  --color-muted-soft: #8577ab;
+
+  --font-display: 'Baloo 2', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'Space Mono', ui-monospace, monospace;
+}
+
+:root {
+  color-scheme: dark;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--color-cream);
+  background: var(--color-ink);
+  min-height: 100svh;
+
+  /*
+   * SIGNATURE: soft "stage light" glow
+   * sweeping the room — a pink beam
+   * top-left, a gold beam bottom-right,
+   * fixed and subtle. Suggests a party
+   * without being loud about it.
+   */
+  background-image:
+    radial-gradient(
+      1100px circle at 10% -10%,
+      rgba(255, 61, 138, 0.16),
+      transparent 55%
+    ),
+    radial-gradient(
+      900px circle at 95% 105%,
+      rgba(255, 201, 74, 0.14),
+      transparent 55%
+    ),
+    radial-gradient(
+      700px circle at 85% 0%,
+      rgba(77, 232, 255, 0.08),
+      transparent 50%
+    );
+  background-attachment: fixed;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+}
+
+/*
+ * Keep focus visible for keyboard
+ * users against the dark background.
+ */
+:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
