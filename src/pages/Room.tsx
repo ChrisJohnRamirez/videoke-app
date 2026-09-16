@@ -18,6 +18,8 @@ import type { RoomUser } from '../types/user'
 import type { YouTubeSearchResult } from '../types/song'
 import { API_URL } from '../lib/config'
 
+import kantahanLogo from "../assets/branding/kantahanLogo.png"
+
 type StripPrize = {
   id: string
   icon: string
@@ -2328,7 +2330,7 @@ function Room() {
       <header className="w-full border-b border-line/60 bg-ink-soft/60 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center gap-4 px-6 py-5">
           <div className="font-display text-xl font-bold tracking-tight text-cream">
-            🎤 Kanta<span className="text-pink">Han</span>
+            <img src={kantahanLogo} alt="KantaHan Logo" className="h-10 w-10 headerLogo" />
           </div>
 
           <div className="ml-auto flex items-center gap-3">
@@ -2420,29 +2422,6 @@ function Room() {
                       width: '100%',
                       height: '100%',
                       playerVars: {
-                        /*
-                         * BUG #3 FIX:
-                         *
-                         * react-youtube destroys and
-                         * recreates the whole player
-                         * whenever videoId changes.
-                         *
-                         * With autoplay: 1, that fresh
-                         * player would immediately start
-                         * playing Song B on its own —
-                         * even while the Strip modal is
-                         * still showing — racing against
-                         * our own startNextSong() logic.
-                         *
-                         * With autoplay: 0, the new
-                         * player only cues the video.
-                         * Our own code (handlePlayerReady
-                         * / startNextSong) becomes the
-                         * ONLY thing that ever calls
-                         * playVideo(), so there's no more
-                         * race between two competing
-                         * "start the song" triggers.
-                         */
                         autoplay: 0,
                         modestbranding: 1,
                         rel: 0,
@@ -2543,7 +2522,9 @@ function Room() {
                 </div>
               )}
 
-            <div
+          
+          </section>
+  <div
               className={`${
                 activeTab === 'add'
                   ? 'block'
@@ -2691,8 +2672,6 @@ function Room() {
                 </div>
               )}
             </div>
-          </section>
-
           <aside
             className={`${
               activeTab === 'queue'
