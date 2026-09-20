@@ -145,6 +145,14 @@ function Room() {
     getCurrentTime: () => number
   } | null>(null)
 
+  /*
+   * Host-only video container. Keeping the fullscreen
+   * element outside the YouTube iframe means changing
+   * songs does not intentionally exit fullscreen.
+   */
+  const hostVideoContainerRef =
+    useRef<HTMLDivElement | null>(null)
+
   const socketRef =
     useRef<ReturnType<typeof io> | null>(null)
 
@@ -2191,6 +2199,32 @@ function Room() {
     }
 
   /*
+   * KEEP THE HOST VIDEO IN FULLSCREEN
+   *
+   * This is called from the Host's Next button,
+   * which is a user gesture and therefore allowed
+   * by browser fullscreen policy.
+   */
+  const ensureHostFullscreen = () => {
+    if (!isHost) {
+      return
+    }
+
+    const container =
+      hostVideoContainerRef.current
+
+    if (!container) {
+      return
+    }
+
+    if (!document.fullscreenElement) {
+      container.requestFullscreen?.().catch(() => {
+        // Fullscreen can be denied by the browser.
+      })
+    }
+  }
+
+  /*
    * NEXT SONG (MANUAL SKIP)
    *
    * Host or Admin. Always skips the
@@ -2200,6 +2234,8 @@ function Room() {
    */
   const handleNextSong =
     async () => {
+      ensureHostFullscreen()
+
       if (
         !roomCode ||
         !isController
@@ -2409,70 +2445,110 @@ function Room() {
                 : 'hidden'
             } md:block`}
           >
-            <div className="aspect-video overflow-hidden rounded-2xl border border-line bg-ink-soft shadow-[0_0_60px_-15px_rgba(255,61,138,0.25)]">
+            <div
+              ref={hostVideoContainerRef}
+              className="relative aspect-video overflow-hidden rounded-2xl border border-line bg-ink-soft shadow-[0_0_60px_-15px_rgba(255,61,138,0.25)]"
+            >
               {currentSong ? (
-                <div className="relative h-full w-full">
-                  <YouTube
-                    videoId={
-                      currentSong.videoId
-                    }
-                    className="h-full w-full"
-                    iframeClassName="h-full w-full"
-                    opts={{
-                      width: '100%',
-                      height: '100%',
-                      playerVars: {
-                        autoplay: 0,
-                        modestbranding: 1,
-                        rel: 0,
-                        controls:
-                          isController
-                            ? 1
-                            : 0,
-                        disablekb:
-                          isController
-                            ? 0
-                            : 1,
-                      },
-                    }}
-                    onReady={
-                      handlePlayerReady
-                    }
-                    onPlay={
-                      handlePlayerPlay
-                    }
-                    onPause={
-                      handlePlayerPause
-                    }
-                    onEnd={
-                      handlePlayerEnd
-                    }
-                  />
-
-                  {!isController && (
-                    <div
-                      className="absolute inset-0 z-10"
-                      onClick={(
-                        event,
-                      ) => {
-                        event.preventDefault()
-                        event.stopPropagation()
+                isHost ? (
+                  <div className="relative h-full w-full">
+                    <YouTube
+                      videoId={
+                        currentSong.videoId
+                      }
+                      className="h-full w-full"
+                      iframeClassName="h-full w-full"
+                      opts={{
+                        width: '100%',
+                        height: '100%',
+                        playerVars: {
+                          autoplay: 0,
+                          modestbranding: 1,
+                          rel: 0,
+                          controls: 1,
+                          disablekb: 0,
+                          fs: 0,
+                        },
                       }}
-                      onMouseDown={(
-                        event,
-                      ) => {
-                        event.preventDefault()
-                        event.stopPropagation()
-                      }}
-                      onPointerDown={(
-                        event,
-                      ) => {
-                        event.preventDefault()
-                        event.stopPropagation()
-                      }}
+                      onReady={
+                        handlePlayerReady
+                      }
+                      onPlay={
+                        handlePlayerPlay
+                      }
+                      onPause={
+                        handlePlayerPause
+                      }
+                      onEnd={
+                        handlePlayerEnd
+                      }
                     />
-                  )}
-                </div>
+
+                    {/*
+                     * Keep Next accessible while the
+                     * Host is in browser fullscreen.
+                     */}
+                    <div className="absolute right-3 top-3 z-20 flex gap-2">
+                      <button
+                        type="button"
+                        onClick={ensureHostFullscreen}
+                        className="rounded-xl border border-white/20 bg-black/60 px-3 py-2 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-black/80"
+                        title="Fullscreen"
+                      >
+                        ⛶
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={
+                          handleNextSong
+                        }
+                        disabled={
+                          skippingSong
+                        }
+                        className="rounded-xl border border-white/20 bg-black/60 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-black/80 disabled:opacity-50"
+                      >
+                        {skippingSong
+                          ? 'Skipping…'
+                          : '⏭ Next'}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  /*
+                   * Joiners and Admins no longer load
+                   * a YouTube iframe. This prevents
+                   * their devices from participating in
+                   * playback synchronization.
+                   */
+                  <div className="flex h-full w-full items-center justify-center px-6 text-center">
+                    <div className="w-full max-w-xl">
+                      <p className="text-xs font-bold uppercase tracking-widest text-gold-soft">
+                        ▶ Now Playing
+                      </p>
+                      <h2 className="mt-3 text-xl font-semibold leading-snug text-cream md:text-2xl">
+                        {currentSong.title}
+                      </h2>
+
+                      {isAdmin && (
+                        <button
+                          type="button"
+                          onClick={
+                            handleNextSong
+                          }
+                          disabled={
+                            skippingSong
+                          }
+                          className="mt-6 rounded-xl border border-line px-5 py-3 text-sm font-semibold text-cream transition-colors hover:border-cyan/50 disabled:opacity-50"
+                        >
+                          {skippingSong
+                            ? 'Skipping…'
+                            : '⏭ Next'}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )
               ) : (
                 <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
                   <div className="text-5xl opacity-80">
@@ -2502,27 +2578,6 @@ function Room() {
               )}
             </div>
 
-            {isController &&
-              currentSong && (
-                <div className="mt-3 flex justify-end">
-                  <button
-                    type="button"
-                    onClick={
-                      handleNextSong
-                    }
-                    disabled={
-                      skippingSong
-                    }
-                    className="rounded-xl border border-line px-4 py-2 text-sm font-semibold text-cream transition-colors hover:border-cyan/50 disabled:opacity-50"
-                  >
-                    {skippingSong
-                      ? 'Skipping…'
-                      : '⏭ Next'}
-                  </button>
-                </div>
-              )}
-
-          
           </section>
   <div
               className={`${
