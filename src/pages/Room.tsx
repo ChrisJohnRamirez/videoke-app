@@ -2453,6 +2453,7 @@ function Room() {
                 isHost ? (
                   <div className="relative h-full w-full">
                     <YouTube
+                      key={currentSong.id}
                       videoId={
                         currentSong.videoId
                       }
