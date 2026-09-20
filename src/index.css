@@ -43,9 +43,11 @@ body {
   margin: 0;
   font-family: var(--font-body);
   color: var(--color-cream);
-  background: var(--color-ink);
+  background:
+    radial-gradient(circle at 15% 5%, rgba(67, 45, 170, 0.22), transparent 32%),
+    radial-gradient(circle at 90% 10%, rgba(255, 61, 138, 0.10), transparent 28%),
+    #070a22;
   min-height: 100svh;
-
   background-attachment: fixed;
 }
 
@@ -89,6 +91,13 @@ h3 {
   width: 69px;
   height: auto;
   object-fit: contain;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 
 .homeButtonsDiv {
