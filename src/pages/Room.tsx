@@ -18,7 +18,7 @@ import type { RoomUser } from '../types/user'
 import type { YouTubeSearchResult } from '../types/song'
 import { API_URL } from '../lib/config'
 
-import kantahanLogo from "../assets/branding/kantahanLogo.png"
+import kantahanLogo from "../assets/branding/kantahan-wordmark.png"
 
 type StripPrize = {
   id: string
@@ -38,22 +38,6 @@ function Room() {
 
   const [error, setError] =
     useState('')
-
-  /*
-   * MOBILE TABS
-   *
-   * On small screens the page switches
-   * to a 3-tab layout (Now Playing /
-   * Queue / Add Song) instead of a long
-   * vertical stack. On md+ screens all
-   * three stay visible side by side, as
-   * before — this state only affects
-   * the mobile view.
-   */
-  const [activeTab, setActiveTab] =
-    useState<
-      'now' | 'queue' | 'add'
-    >('now')
 
   const [showAddSong, setShowAddSong] =
     useState(false)
@@ -2363,100 +2347,90 @@ function Room() {
 
   return (
     <main className="min-h-screen font-body text-cream">
-      <header className="w-full border-b border-line/60 bg-ink-soft/60 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center gap-4 px-6 py-5">
-          <div className="font-display text-xl font-bold tracking-tight text-cream">
-            <img src={kantahanLogo} alt="KantaHan Logo" className="h-10 w-10 headerLogo" />
+      <header className="sticky top-0 z-40 w-full border-b border-violet-500/20 bg-[#080b2d]/90 backdrop-blur-xl">
+        <div className="mx-auto flex min-h-[76px] max-w-[1500px] items-center gap-4 px-4 sm:px-6 lg:px-8">
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            className="shrink-0 transition-transform hover:scale-[1.02]"
+            aria-label="Kantahan home"
+          >
+            <img
+              src={kantahanLogo}
+              alt="Kantahan"
+              className="hidden h-12 w-auto object-contain sm:block"
+            />
+            <img
+              src={kantahanLogo}
+              alt="Kantahan"
+              className="h-10 w-auto max-w-[190px] object-contain sm:hidden"
+            />
+          </button>
+
+          <div className="hidden h-8 w-px bg-violet-400/20 sm:block" />
+
+          <div className="flex min-w-0 items-center gap-2 rounded-full border border-violet-500/40 bg-[#11133f]/80 px-3 py-2 shadow-[0_0_24px_-10px_rgba(99,70,255,0.8)] sm:px-4">
+            <span className="text-cyan">🔗</span>
+            <span className="hidden text-xs font-semibold text-violet-200 sm:inline">Room:</span>
+            <span className="truncate font-mono text-xs font-bold tracking-widest text-white sm:text-sm">
+              {room.code}
+            </span>
           </div>
 
-          <div className="ml-auto flex items-center gap-3">
-            <div className="hidden items-center gap-2 rounded-full border border-gold/40 bg-gold/10 px-3 py-1.5 sm:flex">
-              <span className="text-[10px] font-semibold uppercase tracking-widest text-gold-soft">
-                Room
-              </span>
-              <span className="font-mono text-sm font-bold tracking-[0.2em] text-gold">
-                {room.code}
-              </span>
+          <div className="ml-auto flex items-center gap-2">
+            <div
+              className={`hidden rounded-full border px-3 py-2 text-xs font-bold sm:flex sm:items-center sm:gap-2 ${
+                isHost
+                  ? 'border-gold/30 bg-gold/10 text-gold'
+                  : isAdmin
+                    ? 'border-pink/30 bg-pink/10 text-pink-soft'
+                    : 'border-cyan/30 bg-cyan/10 text-cyan'
+              }`}
+            >
+              <span>{isHost ? '👑' : isAdmin ? '🛡️' : '🎤'}</span>
+              <span>{isHost ? 'Host' : isAdmin ? 'Admin' : 'Joiner'}</span>
+            </div>
+
+            <div className="flex items-center gap-2 rounded-full border border-violet-500/40 bg-[#11133f]/80 px-3 py-2 text-xs font-bold text-white">
+              <span>👥</span>
+              <span>{room.users.length}</span>
             </div>
 
             <button
               type="button"
-              onClick={() =>
-                setShowShareRoom(true)
-              }
-              className="rounded-xl border border-line bg-card px-4 py-2 text-sm font-semibold text-cream transition-colors hover:border-pink/50 hover:bg-card-hover"
+              onClick={() => setShowShareRoom(true)}
+              className="rounded-full border border-violet-500/40 bg-[#11133f]/80 px-3 py-2 text-xs font-bold text-white transition hover:border-cyan/60 hover:bg-violet-900/40"
             >
-              Share
+              <span className="sm:hidden">↗</span>
+              <span className="hidden sm:inline">Share</span>
             </button>
 
             <button
               type="button"
-              onClick={
-                handleLeaveRoom
-              }
-              className="rounded-xl border border-line px-4 py-2 text-sm font-semibold text-muted transition-colors hover:border-pink/40 hover:text-pink-soft"
+              onClick={handleLeaveRoom}
+              className="rounded-full border border-violet-500/30 bg-[#11133f]/80 px-3 py-2 text-xs font-bold text-violet-200 transition hover:border-pink/60 hover:text-pink-soft"
             >
-              Leave
+              <span className="sm:hidden">✕</span>
+              <span className="hidden sm:inline">Leave</span>
             </button>
           </div>
         </div>
-
-        <div className="flex border-t border-line/60 md:hidden">
-          {(
-            [
-              {
-                id: 'now' as const,
-                label: '🎬 Now Playing',
-              },
-              {
-                id: 'queue' as const,
-                label: '📋 Queue',
-              },
-              {
-                id: 'add' as const,
-                label: '➕ Add Song',
-              },
-            ]
-          ).map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() =>
-                setActiveTab(tab.id)
-              }
-              className={`flex-1 border-b-2 px-2 py-3 text-center text-xs font-semibold transition-colors ${
-                activeTab === tab.id
-                  ? 'border-pink text-cream'
-                  : 'border-transparent text-muted-soft'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
       </header>
 
-      <div className="mx-auto max-w-5xl px-6 py-10">
-        <div className="grid gap-6 md:grid-cols-[1fr_320px]">
-          <section
-            className={`${
-              activeTab === 'now'
-                ? 'block'
-                : 'hidden'
-            } md:block`}
-          >
-            <div
+      <div className="mx-auto max-w-[1500px] px-4 py-5 sm:px-6 sm:py-7 lg:px-8 lg:py-8">
+        <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-start">
+          {/* LEFT COLUMN: VIDEO + ADD SONG */}
+          <div className="min-w-0">
+            <section
               ref={hostVideoContainerRef}
-              className="relative aspect-video overflow-hidden rounded-2xl border border-line bg-ink-soft shadow-[0_0_60px_-15px_rgba(255,61,138,0.25)]"
+              className="relative aspect-video w-full overflow-hidden rounded-[24px] border border-violet-500/70 bg-[#050716] shadow-[0_0_70px_-25px_rgba(72,54,255,0.9)]"
             >
               {currentSong ? (
                 isHost ? (
-                  <div className="relative h-full w-full">
+                  <div className="relative h-full w-full bg-black">
                     <YouTube
                       key={currentSong.id}
-                      videoId={
-                        currentSong.videoId
-                      }
+                      videoId={currentSong.videoId}
                       className="h-full w-full"
                       iframeClassName="h-full w-full"
                       opts={{
@@ -2471,485 +2445,321 @@ function Room() {
                           fs: 0,
                         },
                       }}
-                      onReady={
-                        handlePlayerReady
-                      }
-                      onPlay={
-                        handlePlayerPlay
-                      }
-                      onPause={
-                        handlePlayerPause
-                      }
-                      onEnd={
-                        handlePlayerEnd
-                      }
+                      onReady={handlePlayerReady}
+                      onPlay={handlePlayerPlay}
+                      onPause={handlePlayerPause}
+                      onEnd={handlePlayerEnd}
                     />
 
-                    {/*
-                     * Keep Next accessible while the
-                     * Host is in browser fullscreen.
-                     */}
-                    <div className="absolute right-3 top-3 z-20 flex gap-2">
+                    <div className="absolute right-3 top-3 z-20 flex gap-2 sm:right-4 sm:top-4">
                       <button
                         type="button"
                         onClick={ensureHostFullscreen}
-                        className="rounded-xl border border-white/20 bg-black/60 px-3 py-2 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-black/80"
+                        className="rounded-xl border border-white/15 bg-black/65 px-3 py-2 text-sm font-bold text-white backdrop-blur-md transition hover:bg-black/85"
                         title="Fullscreen"
                       >
                         ⛶
                       </button>
-
                       <button
                         type="button"
-                        onClick={
-                          handleNextSong
-                        }
-                        disabled={
-                          skippingSong
-                        }
-                        className="rounded-xl border border-white/20 bg-black/60 px-4 py-2 text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:bg-black/80 disabled:opacity-50"
+                        onClick={handleNextSong}
+                        disabled={skippingSong}
+                        className="rounded-xl border border-pink/40 bg-pink px-4 py-2 text-sm font-bold text-[#160a25] shadow-[0_0_22px_-7px_rgba(255,61,138,0.9)] transition hover:scale-[1.02] disabled:opacity-50"
                       >
-                        {skippingSong
-                          ? 'Skipping…'
-                          : '⏭ Next'}
+                        {skippingSong ? 'Skipping…' : '⏭ Next'}
                       </button>
                     </div>
                   </div>
                 ) : (
-                  /*
-                   * Joiners and Admins no longer load
-                   * a YouTube iframe. This prevents
-                   * their devices from participating in
-                   * playback synchronization.
-                   */
-                  <div className="flex h-full w-full items-center justify-center px-6 text-center">
-                    <div className="w-full max-w-xl">
-                      <p className="text-xs font-bold uppercase tracking-widest text-gold-soft">
-                        ▶ Now Playing
+                  <div className="flex h-full w-full items-center justify-center bg-[radial-gradient(circle_at_center,rgba(68,42,170,0.35),transparent_55%)] px-6 text-center">
+                    <div className="max-w-xl">
+                      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-pink/15 text-3xl shadow-[0_0_35px_-10px_rgba(255,61,138,0.9)]">
+                        🎵
+                      </div>
+                      <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.25em] text-cyan">
+                        Now Playing
                       </p>
-                      <h2 className="mt-3 text-xl font-semibold leading-snug text-cream md:text-2xl">
+                      <h2 className="mt-2 font-display text-xl font-bold leading-snug text-white sm:text-2xl lg:text-3xl">
                         {currentSong.title}
                       </h2>
+                      <p className="mt-3 text-sm text-violet-200">
+                        Only the host can see the video.
+                      </p>
 
                       {isAdmin && (
                         <button
                           type="button"
-                          onClick={
-                            handleNextSong
-                          }
-                          disabled={
-                            skippingSong
-                          }
-                          className="mt-6 rounded-xl border border-line px-5 py-3 text-sm font-semibold text-cream transition-colors hover:border-cyan/50 disabled:opacity-50"
+                          onClick={handleNextSong}
+                          disabled={skippingSong}
+                          className="mt-6 rounded-xl bg-pink px-5 py-3 text-sm font-bold text-[#160a25] shadow-[0_0_25px_-8px_rgba(255,61,138,0.9)] transition hover:scale-[1.02] disabled:opacity-50"
                         >
-                          {skippingSong
-                            ? 'Skipping…'
-                            : '⏭ Next'}
+                          {skippingSong ? 'Skipping…' : '⏭ Next'}
                         </button>
                       )}
                     </div>
                   </div>
                 )
               ) : (
-                <div className="flex h-full flex-col items-center justify-center gap-3 px-6 text-center">
-                  <div className="text-5xl opacity-80">
-                    🎙️
-                  </div>
-                  <p className="font-display text-lg font-semibold text-cream">
+                <div className="flex h-full flex-col items-center justify-center bg-[radial-gradient(circle_at_center,rgba(68,42,170,0.35),transparent_55%)] px-6 text-center">
+                  <img
+                    src={kantahanLogo}
+                    alt="Kantahan"
+                    className="w-[180px] max-w-[70%] opacity-95 drop-shadow-[0_0_30px_rgba(0,212,255,0.25)] sm:w-[230px]"
+                  />
+                  <p className="mt-5 font-display text-xl font-bold text-white sm:text-2xl">
                     Walang kumakanta ngayon
                   </p>
-                  <p className="max-w-xs text-sm text-muted">
-                    Maghanap ng kanta para
-                    masimulan ang videoke
-                    night!
+                  <p className="mt-2 max-w-sm text-sm leading-6 text-violet-200">
+                    Maghanap ng kanta para masimulan ang videoke night!
                   </p>
+                </div>
+              )}
+            </section>
+
+            {/* ADD SONG BAR */}
+            <button
+              type="button"
+              onClick={() => setShowAddSong((value) => !value)}
+              className="mt-5 flex w-full items-center gap-4 rounded-[22px] border border-pink/80 bg-gradient-to-r from-[#351070] via-[#38107c] to-[#27105e] px-4 py-4 text-left shadow-[0_0_35px_-16px_rgba(255,61,138,0.95)] transition hover:border-pink hover:brightness-110 sm:px-6 sm:py-5"
+            >
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-pink to-[#ff6fc0] text-3xl font-light text-white shadow-[0_0_24px_-6px_rgba(255,61,138,0.9)]">
+                +
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-display text-lg font-bold text-white sm:text-xl">
+                  + Add Song
+                </span>
+                <span className="mt-0.5 block truncate text-xs text-violet-200 sm:text-sm">
+                  Search for a song on YouTube and add it to the queue.
+                </span>
+              </span>
+              <span className="hidden text-3xl text-white sm:block">›</span>
+            </button>
+
+            {showAddSong && (
+              <div className="mt-4 rounded-[22px] border border-violet-500/40 bg-[#11133f] p-4 shadow-[0_0_40px_-20px_rgba(99,70,255,0.8)] sm:p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <div>
+                    <h2 className="font-display text-xl font-bold text-white">Add a Song</h2>
+                    <p className="mt-1 text-xs text-violet-200">Search YouTube and add a song to the room queue.</p>
+                  </div>
                   <button
                     type="button"
                     onClick={() => {
-                      setShowAddSong(
-                        true,
-                      )
-                      setActiveTab('add')
+                      setShowAddSong(false)
+                      setSearchQuery('')
+                      setSearchResults([])
+                      setSearchError('')
                     }}
-                    className="mt-2 rounded-xl bg-pink px-5 py-2.5 text-sm font-semibold text-ink shadow-[0_0_25px_-5px_rgba(255,61,138,0.6)] transition-transform hover:scale-105"
+                    className="rounded-full border border-violet-500/30 px-3 py-2 text-xs font-bold text-violet-200 hover:border-pink/50 hover:text-white"
                   >
-                    + Add a Song
+                    Close
                   </button>
                 </div>
-              )}
+
+                <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter') handleSearch()
+                    }}
+                    placeholder="Search for a karaoke song..."
+                    className="min-w-0 flex-1 rounded-xl border border-violet-500/35 bg-[#080b2d] px-4 py-3 text-sm text-white placeholder:text-violet-400 focus:border-cyan focus:outline-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSearch}
+                    disabled={searching || !searchQuery.trim()}
+                    className="rounded-xl bg-pink px-5 py-3 text-sm font-bold text-[#160a25] transition hover:brightness-110 disabled:opacity-40 sm:shrink-0"
+                  >
+                    {searching ? 'Searching…' : 'Search'}
+                  </button>
+                </div>
+
+                {searchError && (
+                  <p className="mt-3 text-sm text-pink-soft">{searchError}</p>
+                )}
+
+                {searchResults.length > 0 && (
+                  <div className="mt-5 space-y-3">
+                    {searchResults.map((song) => (
+                      <div
+                        key={song.videoId}
+                        className="flex min-w-0 flex-col gap-3 rounded-2xl border border-violet-500/25 bg-[#080b2d]/80 p-3 sm:flex-row sm:items-center"
+                      >
+                        <img
+                          src={song.thumbnail}
+                          alt=""
+                          className="h-40 w-full rounded-xl object-cover sm:h-16 sm:w-28"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <p className="line-clamp-2 text-sm font-semibold text-white">{song.title}</p>
+                          <button
+                            type="button"
+                            onClick={() => handleAddSong(song)}
+                            disabled={addingSong}
+                            className="mt-3 rounded-lg bg-cyan px-4 py-2 text-xs font-bold text-[#07102a] disabled:opacity-40"
+                          >
+                            {addingSong ? 'Adding…' : 'Add to Queue'}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* RIGHT COLUMN: SONG QUEUE */}
+          <aside className="min-w-0 rounded-[24px] border border-violet-500/50 bg-gradient-to-b from-[#16124b] to-[#0e1036] p-4 shadow-[0_0_50px_-25px_rgba(99,70,255,0.9)] sm:p-5 lg:sticky lg:top-[96px]">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 items-center gap-3">
+                <span className="text-3xl text-pink">♫</span>
+                <h2 className="font-display text-xl font-bold text-white sm:text-2xl">Song Queue</h2>
+              </div>
+              <span className="shrink-0 rounded-full bg-white/10 px-3 py-1.5 text-xs font-bold text-violet-100">
+                {room.queue.songs.length} {room.queue.songs.length === 1 ? 'song' : 'songs'}
+              </span>
             </div>
 
-          </section>
-  <div
-              className={`${
-                activeTab === 'add'
-                  ? 'block'
-                  : 'hidden'
-              } md:block`}
-            >
-              <button
-                type="button"
-                onClick={() =>
-                  setShowAddSong(true)
-                }
-                className="mt-6 w-full rounded-xl bg-pink py-4 font-display font-semibold text-ink shadow-[0_0_25px_-5px_rgba(255,61,138,0.5)] transition-transform hover:scale-[1.01]"
-              >
-                + Add Song
-              </button>
+            <div className="mt-4 divide-y divide-violet-500/20">
+              {room.queue.songs.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-violet-500/30 bg-[#080b2d]/50 p-8 text-center">
+                  <div className="text-4xl">🎤</div>
+                  <p className="mt-3 font-semibold text-white">Queue is empty</p>
+                  <p className="mt-1 text-sm text-violet-200">Add a song to get the videoke started.</p>
+                </div>
+              ) : (
+                room.queue.songs.map((song, index) => {
+                  const canRemove =
+                    index !== 0 &&
+                    (isHost || song.addedById === currentUser?.id)
 
-              {showAddSong && (
-                <div className="mt-6 rounded-2xl border border-line bg-card p-5">
-                  <div className="flex items-center justify-between">
-                    <h2 className="font-display text-xl font-semibold text-cream">
-                      Add a Song
-                    </h2>
-
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowAddSong(
-                          false,
-                        )
-                        setSearchQuery(
-                          '',
-                        )
-                        setSearchResults(
-                          [],
-                        )
-                        setSearchError(
-                          '',
-                        )
-                      }}
-                      className="text-sm text-muted hover:text-cream"
+                  return (
+                    <div
+                      key={song.id}
+                      className={`group flex min-w-0 gap-3 py-4 first:pt-1 last:pb-1 ${
+                        index === 0
+                          ? 'mb-1 rounded-2xl border border-pink/40 bg-gradient-to-r from-[#32106e] to-[#1d1554] px-3 shadow-[0_0_30px_-20px_rgba(255,61,138,0.9)]'
+                          : 'px-1'
+                      }`}
                     >
-                      Cancel
-                    </button>
-                  </div>
+                      <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-sm font-bold ${index === 0 ? 'bg-pink text-white' : 'bg-violet-500/20 text-violet-100'}`}>
+                        {index + 1}
+                      </div>
 
-                  <div className="mt-6">
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={
-                          searchQuery
-                        }
-                        onChange={(
-                          event,
-                        ) =>
-                          setSearchQuery(
-                            event
-                              .target
-                              .value,
-                          )
-                        }
-                        onKeyDown={(
-                          event,
-                        ) => {
-                          if (
-                            event.key ===
-                            'Enter'
-                          ) {
-                            handleSearch()
-                          }
-                        }}
-                        placeholder="Search for a karaoke song..."
-                        className="min-w-0 flex-1 rounded-xl border border-line bg-ink-soft px-4 py-3 text-cream placeholder:text-muted-soft focus:border-pink/50 focus:outline-none"
+                      <img
+                        src={`https://img.youtube.com/vi/${song.videoId}/mqdefault.jpg`}
+                        alt=""
+                        className="h-16 w-24 shrink-0 rounded-xl border border-white/10 object-cover sm:h-[68px] sm:w-[92px]"
                       />
 
-                      <button
-                        type="button"
-                        onClick={
-                          handleSearch
-                        }
-                        disabled={
-                          searching ||
-                          !searchQuery.trim()
-                        }
-                        className="rounded-xl bg-gold px-5 py-3 font-semibold text-ink disabled:opacity-40"
-                      >
-                        {searching
-                          ? '...'
-                          : 'Search'}
-                      </button>
+                      <div className="min-w-0 flex-1">
+                        <p className="line-clamp-2 text-sm font-bold leading-5 text-white">{song.title}</p>
+                        <p className="mt-1 truncate text-xs text-violet-200">{song.addedBy}</p>
+                        {index === 0 && (
+                          <span className="mt-2 inline-flex rounded-full bg-pink px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                            Now Playing
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex shrink-0 flex-col items-end justify-between gap-2">
+                        {index === 1 && isController && (
+                          <button
+                            type="button"
+                            onClick={handleNextSong}
+                            disabled={skippingSong}
+                            className="rounded-full bg-violet-500/30 px-3 py-1.5 text-xs font-bold text-white transition hover:bg-pink disabled:opacity-50"
+                          >
+                            Next
+                          </button>
+                        )}
+                        {canRemove && (
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveSong(song.id)}
+                            className="rounded-full p-1.5 text-xs text-violet-300 transition hover:bg-pink/10 hover:text-pink-soft"
+                            title="Remove song"
+                          >
+                            ⋮
+                          </button>
+                        )}
+                      </div>
                     </div>
-
-                    {searchError && (
-                      <p className="mt-3 text-sm text-pink-soft">
-                        {searchError}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="mt-6 space-y-4">
-                    {searchResults.map(
-                      (song) => (
-                        <div
-                          key={
-                            song.videoId
-                          }
-                          className="flex gap-4 rounded-xl border border-line bg-ink-soft p-3"
-                        >
-                          <img
-                            src={
-                              song.thumbnail
-                            }
-                            alt=""
-                            className="h-20 w-32 rounded-lg object-cover"
-                          />
-
-                          <div className="min-w-0 flex-1">
-                            <p className="font-medium text-cream">
-                              {
-                                song.title
-                              }
-                            </p>
-
-                            <button
-                              type="button"
-                              onClick={() =>
-                                handleAddSong(
-                                  song,
-                                )
-                              }
-                              disabled={
-                                addingSong
-                              }
-                              className="mt-3 rounded-lg bg-pink px-4 py-2 font-semibold text-ink disabled:opacity-40"
-                            >
-                              {addingSong
-                                ? 'Adding...'
-                                : 'Add to Queue'}
-                            </button>
-                          </div>
-                        </div>
-                      ),
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          <aside
-            className={`${
-              activeTab === 'queue'
-                ? 'block'
-                : 'hidden'
-            } md:block h-fit rounded-2xl border border-line bg-card p-5`}
-          >
-            <h2 className="font-display text-xl font-semibold text-cream">
-              Song Queue
-            </h2>
-
-            <div className="mt-6">
-              {room.queue.songs
-                .length === 0 ? (
-                <p className="text-sm text-muted">
-                  Walang laman ang
-                  queue — mag-add ng
-                  kanta!
-                </p>
-              ) : (
-                <div className="space-y-3">
-                  {room.queue.songs.map(
-                    (
-                      song,
-                      index,
-                    ) => {
-                      const canRemove =
-                        index !== 0 &&
-                        (isHost ||
-                          song.addedById ===
-                            currentUser?.id)
-
-                      const initials =
-                        song.addedBy
-                          .trim()
-                          .slice(
-                            0,
-                            2,
-                          )
-                          .toUpperCase()
-
-                      return (
-                        <div
-                          key={song.id}
-                          className={`rounded-xl border p-3 ${
-                            index === 0
-                              ? 'border-gold/50 bg-gold/10'
-                              : index ===
-                                  1
-                                ? 'border-pink/40 bg-pink/5'
-                                : 'border-line bg-ink-soft'
-                          }`}
-                        >
-                          <div className="flex items-start gap-3">
-                            <div
-                              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full font-display text-xs font-bold ${
-                                index ===
-                                0
-                                  ? 'bg-gold text-ink'
-                                  : 'bg-line text-cream'
-                              }`}
-                            >
-                              {
-                                initials
-                              }
-                            </div>
-
-                            <div className="min-w-0 flex-1">
-                              {index ===
-                                0 && (
-                                <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-gold-soft">
-                                  ▶
-                                  Now
-                                  Playing
-                                </p>
-                              )}
-
-                              {index ===
-                                1 && (
-                                <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-pink-soft">
-                                  Up
-                                  Next
-                                </p>
-                              )}
-
-                              <p className="truncate font-medium text-cream">
-                                {song.title}
-                              </p>
-
-                              <p className="text-sm text-muted">
-                                Added by{' '}
-                                {
-                                  song.addedBy
-                                }
-                              </p>
-                            </div>
-
-                            {canRemove && (
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  handleRemoveSong(
-                                    song.id,
-                                  )
-                                }
-                                className="shrink-0 rounded-lg px-3 py-2 text-sm font-semibold text-muted hover:text-pink-soft"
-                              >
-                                Remove
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      )
-                    },
-                  )}
-                </div>
+                  )
+                })
               )}
             </div>
           </aside>
         </div>
 
-        <section
-          className={`${
-            activeTab === 'queue'
-              ? 'block'
-              : 'hidden'
-          } md:block mt-6 rounded-2xl border border-line bg-card p-5`}
-        >
-          <h2 className="font-display text-xl font-semibold text-cream">
-            People in Room
-          </h2>
+        {/* PEOPLE IN ROOM */}
+        <section className="mt-6 rounded-[22px] border border-violet-500/30 bg-[#11133f]/75 p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-display text-xl font-bold text-white">People in Room</h2>
+            <span className="rounded-full bg-violet-500/15 px-3 py-1 text-xs font-bold text-violet-200">
+              {room.users.length} connected
+            </span>
+          </div>
 
-          <div className="mt-6 space-y-3">
-            {room.users.map(
-              (user: RoomUser) => {
-                const initials = user.name
-                  .trim()
-                  .slice(0, 2)
-                  .toUpperCase()
+          <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {room.users.map((user: RoomUser) => {
+              const initials = user.name.trim().slice(0, 2).toUpperCase()
+              const canKick = isHost
+                ? user.role !== 'host'
+                : isAdmin
+                  ? user.role === 'joiner'
+                  : false
 
-                const canKick =
-                  isHost
-                    ? user.role !==
-                      'host'
-                    : isAdmin
-                      ? user.role ===
-                        'joiner'
-                      : false
-
-                return (
+              return (
+                <div
+                  key={user.id}
+                  className="flex min-w-0 items-center gap-3 rounded-xl border border-violet-500/20 bg-[#080b2d]/70 px-3 py-3"
+                >
                   <div
-                    key={user.id}
-                    className="flex items-center gap-3 rounded-xl border border-line bg-ink-soft px-3 py-2.5"
+                    className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-bold ${
+                      user.role === 'host'
+                        ? 'bg-gold text-[#160f22]'
+                        : user.role === 'admin'
+                          ? 'bg-pink/20 text-pink-soft'
+                          : 'bg-cyan/15 text-cyan'
+                    }`}
                   >
-                    <div
-                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full font-display text-xs font-bold ${
-                        user.role ===
-                        'host'
-                          ? 'bg-gold text-ink'
-                          : user.role ===
-                              'admin'
-                            ? 'bg-pink/20 text-pink-soft'
-                            : 'bg-cyan/20 text-cyan'
-                      }`}
-                    >
-                      {initials}
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate font-medium text-cream">
-                        {user.name}
-                      </p>
-
-                      <p className="text-xs text-muted">
-                        {user.role ===
-                        'host'
-                          ? '👑 Host'
-                          : user.role ===
-                              'admin'
-                            ? '🛡️ Admin'
-                            : 'Joiner'}
-                      </p>
-                    </div>
-
-                    {isHost &&
-                      user.role !==
-                        'host' && (
-                        <button
-                          type="button"
-                          onClick={() =>
-                            handleSetAdmin(
-                              user.id,
-                              user.role !==
-                                'admin',
-                            )
-                          }
-                          className="shrink-0 rounded-lg px-3 py-2 text-sm font-semibold text-muted hover:text-cyan"
-                        >
-                          {user.role ===
-                          'admin'
-                            ? 'Remove Admin'
-                            : 'Make Admin'}
-                        </button>
-                      )}
-
-                    {canKick && (
-                      <button
-                        type="button"
-                        onClick={() =>
-                          handleKickUser(
-                            user.id,
-                          )
-                        }
-                        className="shrink-0 rounded-lg px-3 py-2 text-sm font-semibold text-muted hover:text-pink-soft"
-                      >
-                        Kick
-                      </button>
-                    )}
+                    {initials}
                   </div>
-                )
-              },
-            )}
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-white">{user.name}</p>
+                    <p className="text-xs text-violet-300">
+                      {user.role === 'host' ? '👑 Host' : user.role === 'admin' ? '🛡️ Admin' : 'Joiner'}
+                    </p>
+                  </div>
+
+                  {isHost && user.role !== 'host' && (
+                    <button
+                      type="button"
+                      onClick={() => handleSetAdmin(user.id, user.role !== 'admin')}
+                      className="shrink-0 rounded-lg px-2 py-1 text-[10px] font-bold text-violet-300 hover:text-cyan"
+                    >
+                      {user.role === 'admin' ? 'Remove Admin' : 'Make Admin'}
+                    </button>
+                  )}
+
+                  {canKick && (
+                    <button
+                      type="button"
+                      onClick={() => handleKickUser(user.id)}
+                      className="shrink-0 rounded-lg px-2 py-1 text-[10px] font-bold text-violet-300 hover:text-pink-soft"
+                    >
+                      Kick
+                    </button>
+                  )}
+                </div>
+              )
+            })}
           </div>
         </section>
       </div>
