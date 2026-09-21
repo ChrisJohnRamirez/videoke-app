@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import kantahanLogo from "../assets/branding/kantahan-wordmark.png"
+import kantahanWordmark from "../assets/branding/kantahan-wordmark.png"
 
 type HeaderProps = {
   title: string
@@ -10,7 +10,7 @@ function Header({ title }: HeaderProps) {
     <header className="w-full">
       <div className="mx-auto flex max-w-5xl items-center px-6 py-5">
         <Link to="/" className="font-semibold">
-          <img src={kantahanLogo} alt="KantaHan Logo" className="h-10 w-auto object-contain" />
+          <img src={kantahanWordmark} alt="Kantahan" className="h-auto w-[145px] max-w-[45vw] sm:w-[175px] md:w-[190px]" />
         </Link>
 
         <div className="ml-auto text-lg font-semibold">
