@@ -1,4 +1,4 @@
-import kantahanLogo from "../assets/branding/kantahan-wordmark.png"
+import kantahanWordmark from "../assets/branding/kantahan-wordmark.png"
 
 function Home() {
   return (
@@ -6,7 +6,7 @@ function Home() {
       <div className="w-full max-w-md text-center">
         <div className="mb-10">
           <div id="kantahan-logo-container" className="flex justify-center">
-            <img className="w-[240px] max-w-[80vw] object-contain" src={kantahanLogo} alt="Kantahan Karaoke" />
+            <img id="kantahan-logo" src={kantahanWordmark} alt="Kantahan Karaoke" />
           </div>
 
           <p className="mt-3 text-lg">
