@@ -43,16 +43,14 @@ body {
   margin: 0;
   font-family: var(--font-body);
   color: var(--color-cream);
-  background:
-    radial-gradient(circle at 15% 5%, rgba(67, 45, 170, 0.22), transparent 32%),
-    radial-gradient(circle at 90% 10%, rgba(255, 61, 138, 0.10), transparent 28%),
-    #070a22;
+  background: var(--color-ink);
   min-height: 100svh;
+
   background-attachment: fixed;
 }
 
 #kantahan-logo {
-  width: 200px;
+  width: min(280px, 72vw);
   height: auto;
   object-fit: contain;
 }
@@ -87,18 +85,6 @@ h3 {
   }
 }
 
-.headerLogo {
-  width: 69px;
-  height: auto;
-  object-fit: contain;
-}
-
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  overflow: hidden;
-}
 
 .homeButtonsDiv {
     display: flex;
@@ -112,4 +98,63 @@ h3 {
     padding: 10px;
     width: 150px;
     background: #fe7e37;
+}
+/* Responsive karaoke UI */
+html,
+body,
+#root {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.marquee-track {
+  display: inline-flex;
+  min-width: max-content;
+  animation: kantahan-marquee 12s linear infinite;
+}
+
+.marquee-track > span {
+  flex: 0 0 auto;
+}
+
+@keyframes kantahan-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* Responsive karaoke UI */
+html,
+body,
+#root {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.marquee-track {
+  display: inline-flex;
+  min-width: max-content;
+  animation: kantahan-marquee 12s linear infinite;
+}
+
+.marquee-track > span {
+  flex: 0 0 auto;
+}
+
+@keyframes kantahan-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track { animation: none; }
 }
