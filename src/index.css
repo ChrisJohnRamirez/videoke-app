@@ -97,7 +97,14 @@ h3 {
 {
     padding: 10px;
     width: 150px;
-    background: #fe7e37;
+    border: 1px solid #03C9EB;
+}
+
+.createRoomBtn:hover, .joinRoomBtn:hover 
+{
+    background-color: #03C9EB;
+    color: white;
+    cursor: pointer;
 }
 /* Responsive karaoke UI */
 html,
