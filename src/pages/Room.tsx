@@ -20,11 +20,15 @@ import { API_URL } from '../lib/config'
 
 import kantahanWordmark from "../assets/branding/kantahan-wordmark.png"
 
+import note_icon from '../assets/note.png'
+import wave_sound from '../assets/wave-sound.png'
+
 type StripPrize = {
   id: string
   icon: string
   name: string
 }
+
 
 function Room() {
   const { roomCode } = useParams()
@@ -2430,7 +2434,10 @@ function Room() {
             )}
 
             <section className="mt-5 min-w-0 px-1 sm:px-2">
-              <p className="text-sm font-bold uppercase tracking-[0.16em] text-pink-soft">🎵 Now Playing</p>
+              <div className="flex items-center gap-2">
+                <img src={note_icon} alt="Kantahan Karaoke" className="w-[30px] h-[30px] tracking-[0.16em]" />
+                <p className="text-sm font-bold uppercase tracking-[0.16em] text-[#F0429B] drop-shadow-[0_0_10px_rgba(240, 66, 155,1)]"> Now Playing</p>
+              </div>
 
               {currentSong ? (
                 <>
@@ -2449,14 +2456,14 @@ function Room() {
                 </>
               ) : (
                 <>
-                  <p className="mt-2 text-lg font-semibold text-cream">Walang kumakanta ngayon</p>
-                  <p className="mt-1 max-w-md text-sm text-muted">Maghanap ng kanta para masimulan ang videoke night!</p>
+                  <p className="mt-2 text-lg font-semibold text-cream">It's quiet in here...</p>
+                  <p className="mt-1 max-w-md text-sm text-muted">Pick a song and be the first to sing tonight!</p>
                 </>
               )}
             </section>
 
             <section className="mt-5 min-w-0">
-              <button type="button" onClick={() => setShowAddSong(true)} className="w-full rounded-2xl border border-pink/70 bg-gradient-to-r from-pink to-fuchsia-600 px-5 py-4 font-display text-base font-semibold text-ink shadow-[0_0_30px_-8px_rgba(255,61,138,0.7)] transition-transform hover:scale-[1.005] sm:py-5 sm:text-lg">
+              <button type="button" onClick={() => setShowAddSong(true)} className="w-full rounded-2xl border border-[#00a7f3] from-cyan-400 to-sky-500 bg-gradient-to-r  px-5 py-4 font-display text-base font-semibold text-[#111827] shadow-[0_0_30px_-8px_rgba(0, 205, 242,0.7)] transition-transform hover:scale-[1.005] sm:py-5 sm:text-lg">
                 ＋ Add Song
               </button>
 
@@ -2493,7 +2500,10 @@ function Room() {
 
           <aside className="min-w-0 rounded-2xl border border-line bg-card p-4 sm:p-5">
             <div className="flex items-center justify-between gap-3">
-              <h2 className="font-display text-xl font-semibold text-cream">🎵 Song Queue</h2>
+              <div className="flex items-center gap-3">
+                <img src={wave_sound} alt="Wave Sound" className="w-[30px] h-[30px]" />
+                <h2 className="font-display text-xl font-semibold text-cream">Song Queue</h2>
+              </div>
               <span className="shrink-0 rounded-full bg-line px-3 py-1 text-xs font-semibold text-cream">{room.queue.songs.length} songs</span>
             </div>
 
